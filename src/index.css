@@ -24,3 +24,14 @@ code {
   color: black !important;
   background-color: white !important;
 }
+.image-label > input {
+  display: none;
+}
+
+.userPost {
+  margin-top: 1.25rem;
+  width: 100%;
+}
+.userPost .css-1d3z3hw-MuiOutlinedInput-notchedOutline {
+  border: none;
+}

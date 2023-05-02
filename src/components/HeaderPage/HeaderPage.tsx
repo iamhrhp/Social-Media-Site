@@ -15,6 +15,7 @@ import MailIcon from '@mui/icons-material/Mail';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import MoreIcon from '@mui/icons-material/MoreVert';
 import { Avatar } from '@mui/material';
+import FacebookSharpIcon from '@mui/icons-material/FacebookSharp';
 
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
@@ -39,7 +40,7 @@ const SearchWidth = styled('div')(({ theme }) => ({
   width: '30%',
   [theme.breakpoints.up('sm')]: {
     width: '50%',
-    left: '15%',
+    left: '22%',
   },
 }));
 
@@ -156,68 +157,70 @@ const HeaderPage: FC = (props: IProps) => {
   );
 
   return (
-    <>
-      <Box sx={{ flexGrow: 1 }}>
-        <AppBar position="static" sx={{ backgroundColor: '#ffffff' }}>
-          <Toolbar>
-            <Box>
-              <IconButton sx={{ p: 0 }}>
-                <Avatar
-                  alt="Remy Sharp"
-                  src="https://pbs.twimg.com/media/FjU2lkcWYAgNG6d.jpg"
-                />
-              </IconButton>
-            </Box>
-            <SearchWidth>
-              <Search>
-                <SearchIconWrapper>
-                  <SearchIcon />
-                </SearchIconWrapper>
-                <StyledInputBase
-                  placeholder="Search…"
-                  inputProps={{ 'aria-label': 'search' }}
-                />
-              </Search>
-            </SearchWidth>
+    <Box
+      sx={{
+        flexGrow: 1,
+      }}
+    >
+      <AppBar position="static" sx={{ backgroundColor: '#ffffff' }}>
+        <Toolbar>
+          <Box>
+            <IconButton sx={{ p: 0 }}>
+              <Avatar
+                alt="fb"
+                src="https://logowik.com/content/uploads/images/new-facebook-logo-2019.jpg"
+              />
+            </IconButton>
+          </Box>
+          <SearchWidth>
+            <Search>
+              <SearchIconWrapper>
+                <SearchIcon />
+              </SearchIconWrapper>
+              <StyledInputBase
+                placeholder="Search…"
+                inputProps={{ 'aria-label': 'search' }}
+              />
+            </Search>
+          </SearchWidth>
 
-            <Box sx={{ flexGrow: 1 }} />
-            <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
-              <IconButton
-                size="large"
-                aria-label="show 4 new mails"
-                color="inherit"
-              >
-                <Badge badgeContent={4} color="error">
-                  <MailIcon sx={{ color: '#A2A2AE !important' }} />
-                </Badge>
-              </IconButton>
-              <IconButton
-                size="large"
-                aria-label="show 17 new notifications"
-                color="inherit"
-              >
-                <Badge badgeContent={17} color="error">
-                  <NotificationsIcon sx={{ color: '#A2A2AE !important' }} />
-                </Badge>
-              </IconButton>
-            </Box>
-            <Box sx={{ display: { xs: 'flex', md: 'none' } }}>
-              <IconButton
-                size="large"
-                aria-label="show more"
-                aria-controls={mobileMenuId}
-                aria-haspopup="true"
-                onClick={handleMobileMenuOpen}
-              >
-                <MoreIcon />
-              </IconButton>
-            </Box>
-          </Toolbar>
-        </AppBar>
-        {renderMobileMenu}
-        {renderMenu}
-      </Box>
-    </>
+          <Box sx={{ flexGrow: 1 }} />
+          <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
+            <IconButton
+              size="large"
+              aria-label="show 4 new mails"
+              color="inherit"
+            >
+              <Badge badgeContent={4} color="error">
+                <MailIcon sx={{ color: '#A2A2AE !important' }} />
+              </Badge>
+            </IconButton>
+            <IconButton
+              size="large"
+              aria-label="show 17 new notifications"
+              color="inherit"
+            >
+              <Badge badgeContent={17} color="error">
+                <NotificationsIcon sx={{ color: '#A2A2AE !important' }} />
+              </Badge>
+            </IconButton>
+          </Box>
+          <Box sx={{ display: { xs: 'flex', md: 'none' } }}>
+            <IconButton
+              size="large"
+              aria-label="show more"
+              aria-controls={mobileMenuId}
+              aria-haspopup="true"
+              onClick={handleMobileMenuOpen}
+            >
+              <MoreIcon />
+            </IconButton>
+          </Box>
+        </Toolbar>
+      </AppBar>
+      {renderMobileMenu}
+      {renderMenu}
+    </Box>
   );
 };
 
