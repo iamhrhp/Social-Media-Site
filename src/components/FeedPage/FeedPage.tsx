@@ -13,6 +13,7 @@ import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
 import ChatBubbleIcon from '@mui/icons-material/ChatBubble';
+import { ProfileData } from '../../Data/ProfileData';
 
 interface IProps {}
 
@@ -27,7 +28,20 @@ const FeedPage: FC<IProps> = (props: IProps) => {
   return (
     <Box className="bg-[#FAFAFB] h-screen mt-2">
       <Box className="flex h-[100vh] ">
-        <Box className="w-2/6 bg-white h-100%">Profile</Box>
+        <Box className="w-2/6 bg-white h-100%">
+          <Box>
+            {ProfileData.map((data) => {
+              return (
+                <Box className="flex items-center py-3 hover:bg-sky-500 hover:text-white transition ease-in-out">
+                  <IconButton>{data.img}</IconButton>
+                  <Typography className="font-semibold">
+                    {data.Title}
+                  </Typography>
+                </Box>
+              );
+            })}
+          </Box>
+        </Box>
         <Box className="ml-[10%]  mr-[10%]  mt-5 w-full h-100% flex flex-col m-5">
           <Box className="bg-white rounded-3xl pt-5 pb-5">
             <Typography className="mb-5 ml-7 font-semibold">
@@ -50,7 +64,11 @@ const FeedPage: FC<IProps> = (props: IProps) => {
                 </label>
               </Box>
             </Box>
-            <CardMedia component="img" src={file} />
+            <CardMedia
+              component="img"
+              src={file}
+              className=" mt-5 pl-5 w-[20%]"
+            />
           </Box>
           <Box className="bg-white mt-5 rounded-3xl py-5 ">
             <Box className="">
