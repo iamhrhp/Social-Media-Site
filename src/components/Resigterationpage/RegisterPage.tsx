@@ -2,19 +2,52 @@ import { Button, Box, Typography, CardMedia, TextField } from '@mui/material';
 import { FC, useState } from 'react';
 import fb from '../../images/logo/fb.png';
 import { useNavigate } from 'react-router-dom';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { auth, db } from '../../firebase/firebaseConfig';
+import { addDoc, collection } from 'firebase/firestore';
+import bcrypt from 'bcryptjs';
 
 interface IProps {}
 
 const RegisterPage: FC = (props: IProps) => {
   const [isLogin, setIsLogin] = useState<boolean>(false);
-  const navigate = useNavigate();
+  const [name, setName] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
 
+  const navigate = useNavigate();
+  const uid = Math.floor(Math.random() * 10000);
   const navigateToLogin = () => {
     !isLogin ? setIsLogin(true) : setIsLogin(false);
   };
 
-  const handleNavigateToFeed = () => {
-    navigate('/feed');
+  const handleEmail = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setName(e.target.value);
+  };
+  const handlePass = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setPassword(e.target.value);
+  };
+
+  const handleNavigateToFeed = async () => {
+    try {
+      const hashedPassword = await bcrypt.hash(password, 10);
+      console.log('-bjs--', hashedPassword);
+      const docRef = await addDoc(collection(db, 'users'), {
+        name: name,
+        pass: hashedPassword,
+        // id: id,
+      });
+      // ----------upload profile image-------
+      // let photo = user.photoURL;
+      // console.log('photo--------', photo);
+      // const storageRef = ref(storage, '/images');
+      // const uploadTask = uploadString(storageRef, photo);
+
+      // -----------------------------------
+
+      console.log('Document written with ID: ', docRef.id);
+    } catch (e) {
+      console.error('Error adding document: ', e);
+    }
   };
 
   return (
@@ -42,7 +75,7 @@ const RegisterPage: FC = (props: IProps) => {
                 Are You New ?
               </Typography>
               <Typography className="text-sm text-sky-200 mt-1 mb-5">
-                To keep sharing your work with us, <br /> please Sing up
+                To keep sharing your work with us, <br /> please Sign up
               </Typography>
               <Button className="signinBtn" onClick={navigateToLogin}>
                 Sign Up
@@ -61,8 +94,18 @@ const RegisterPage: FC = (props: IProps) => {
                 Log In
               </Typography>
             )}
-            <TextField label="Name" className="mb-4 w-4/4" />
-            <TextField label="Password" className="mb-10" />
+            <TextField
+              label="Name"
+              value={name}
+              onChange={handleEmail}
+              className="mb-4 w-4/4"
+            />
+            <TextField
+              label="Password"
+              value={password}
+              onChange={handlePass}
+              className="mb-10"
+            />
             <Button
               onClick={handleNavigateToFeed}
               className="w-2/4 m-auto text-base font-semibold rounded-full p-3 bg-sky-900 text-white text-1xl border-solid border-2 hover:bg-white hover:text-sky-900 hover:border-solid hover:border-2 hover:border-sky-900"
@@ -77,3 +120,17 @@ const RegisterPage: FC = (props: IProps) => {
 };
 
 export default RegisterPage;
+
+// createUserWithEmailAndPassword(auth, email, password)
+//   .then((userCredential) => {
+//     // Signed in
+//     const user = userCredential.user;
+//     console.log('-------', user);
+//     // ...
+//   })
+//   .catch((error) => {
+//     const errorCode = error.code;
+//     const errorMessage = error.message;
+//     // ..
+//   });
+// navigate('/feed');
