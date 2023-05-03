@@ -1,5 +1,5 @@
 import { Button, Box, Typography, CardMedia, TextField } from '@mui/material';
-import { FC, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 import fb from '../../images/logo/fb.png';
 import { useNavigate } from 'react-router-dom';
 import { v4 as uuidv4 } from 'uuid';
@@ -16,13 +16,19 @@ import {
   where,
 } from 'firebase/firestore';
 import bcrypt from 'bcryptjs';
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+} from 'firebase/auth';
 
 interface IProps {}
 
 const RegisterPage: FC = (props: IProps) => {
   const [isLogin, setIsLogin] = useState<boolean>(false);
-  const [name, setName] = useState<string>('');
+  const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
+
+  const [hashedpass, setHashedPass] = useState<string>('');
 
   const navigate = useNavigate();
   const uid = uuidv4();
@@ -34,48 +40,47 @@ const RegisterPage: FC = (props: IProps) => {
   // console.log(userss);
   const userRef = collection(db, 'users');
 
-  const handleSignUp = async () => {
-    // if (name === '' || password === '') {
-    //   alert('Please Enter the valid User Details');
-    // } else {
-    //   try {
-    //     const hashedPassword = await bcrypt.hash(password, 10);
-    //     const user = { name: name, password: hashedPassword };
+  // console.log(hashedpass);
 
-    //     await setDoc(userRef, user);
-    //     setIsLogin(false);
-    //   } catch (e) {
-    //     console.error('Error adding document: ', e);
-    //   }
-    // }
-    if (name === '' || password === '') {
+  const handleSignUp = async () => {
+    if (email === '' || password === '') {
       alert('Please Enter the valid User Details');
     } else {
+      const hashedPassword = await bcrypt.hash(password, 10);
       try {
-        const hashedPassword = await bcrypt.hash(password, 10);
-        const user = { name: name, password: hashedPassword };
-
-        const docRef = await addDoc(collection(db, 'users'), user);
-        console.log('Document written with ID: ', docRef.id);
-
-        setIsLogin(false);
-      } catch (e) {
-        console.error('Error adding document: ', e);
+        const userCredential = await createUserWithEmailAndPassword(
+          auth,
+          email,
+          password
+        );
+        const userRef = doc(db, 'users', userCredential.user.uid);
+        await setDoc(userRef, { email, hashedPassword });
+        console.log(userCredential.user);
+        if (userCredential.user) {
+          setIsLogin(false);
+          setEmail('');
+          setPassword('');
+        }
+      } catch (error) {
+        console.error(error);
       }
     }
   };
   console.log(isLogin);
 
   const handleSignIn = async () => {
-    const userQuery = query(userRef, where('name', '==', name));
-    const userSnapshot = await getDocs(userQuery);
-
-    if (!userSnapshot.empty) {
-      const userDoc = userSnapshot.docs[0];
-      const userData = userDoc.data();
-      console.log(userData);
-    } else {
-      console.log('User not found');
+    const userCredential = await signInWithEmailAndPassword(
+      auth,
+      email,
+      password
+    );
+    console.log('login User', userCredential.user);
+    const userRef = doc(db, 'users', userCredential.user.uid);
+    const userDoc = await getDoc(userRef);
+    const passwordHash = userDoc.data()?.hashedPassword;
+    console.log('password hash', passwordHash);
+    if (passwordHash) {
+      navigate('/feed');
     }
   };
 
@@ -125,8 +130,8 @@ const RegisterPage: FC = (props: IProps) => {
             )}
             <TextField
               label="Name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               className="mb-4 w-4/4"
             />
             <TextField
