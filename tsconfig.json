@@ -18,5 +18,5 @@
   },
   "include": ["src"],
   "typeRoots": ["./node_modules/@types"],
-  "types": ["bcryptjs"]
+  "types": ["bcryptjs", "uuid"]
 }

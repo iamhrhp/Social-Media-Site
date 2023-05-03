@@ -2,9 +2,19 @@ import { Button, Box, Typography, CardMedia, TextField } from '@mui/material';
 import { FC, useState } from 'react';
 import fb from '../../images/logo/fb.png';
 import { useNavigate } from 'react-router-dom';
-import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { v4 as uuidv4 } from 'uuid';
 import { auth, db } from '../../firebase/firebaseConfig';
-import { addDoc, collection } from 'firebase/firestore';
+import {
+  addDoc,
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  onSnapshot,
+  query,
+  setDoc,
+  where,
+} from 'firebase/firestore';
 import bcrypt from 'bcryptjs';
 
 interface IProps {}
@@ -15,38 +25,57 @@ const RegisterPage: FC = (props: IProps) => {
   const [password, setPassword] = useState<string>('');
 
   const navigate = useNavigate();
-  const uid = Math.floor(Math.random() * 10000);
+  const uid = uuidv4();
+
   const navigateToLogin = () => {
     !isLogin ? setIsLogin(true) : setIsLogin(false);
   };
 
-  const handleEmail = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setName(e.target.value);
+  // console.log(userss);
+  const userRef = collection(db, 'users');
+
+  const handleSignUp = async () => {
+    // if (name === '' || password === '') {
+    //   alert('Please Enter the valid User Details');
+    // } else {
+    //   try {
+    //     const hashedPassword = await bcrypt.hash(password, 10);
+    //     const user = { name: name, password: hashedPassword };
+
+    //     await setDoc(userRef, user);
+    //     setIsLogin(false);
+    //   } catch (e) {
+    //     console.error('Error adding document: ', e);
+    //   }
+    // }
+    if (name === '' || password === '') {
+      alert('Please Enter the valid User Details');
+    } else {
+      try {
+        const hashedPassword = await bcrypt.hash(password, 10);
+        const user = { name: name, password: hashedPassword };
+
+        const docRef = await addDoc(collection(db, 'users'), user);
+        console.log('Document written with ID: ', docRef.id);
+
+        setIsLogin(false);
+      } catch (e) {
+        console.error('Error adding document: ', e);
+      }
+    }
   };
-  const handlePass = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setPassword(e.target.value);
-  };
+  console.log(isLogin);
 
-  const handleNavigateToFeed = async () => {
-    try {
-      const hashedPassword = await bcrypt.hash(password, 10);
-      console.log('-bjs--', hashedPassword);
-      const docRef = await addDoc(collection(db, 'users'), {
-        name: name,
-        pass: hashedPassword,
-        // id: id,
-      });
-      // ----------upload profile image-------
-      // let photo = user.photoURL;
-      // console.log('photo--------', photo);
-      // const storageRef = ref(storage, '/images');
-      // const uploadTask = uploadString(storageRef, photo);
+  const handleSignIn = async () => {
+    const userQuery = query(userRef, where('name', '==', name));
+    const userSnapshot = await getDocs(userQuery);
 
-      // -----------------------------------
-
-      console.log('Document written with ID: ', docRef.id);
-    } catch (e) {
-      console.error('Error adding document: ', e);
+    if (!userSnapshot.empty) {
+      const userDoc = userSnapshot.docs[0];
+      const userData = userDoc.data();
+      console.log(userData);
+    } else {
+      console.log('User not found');
     }
   };
 
@@ -97,17 +126,18 @@ const RegisterPage: FC = (props: IProps) => {
             <TextField
               label="Name"
               value={name}
-              onChange={handleEmail}
+              onChange={(e) => setName(e.target.value)}
               className="mb-4 w-4/4"
             />
             <TextField
               label="Password"
               value={password}
-              onChange={handlePass}
+              onChange={(e) => setPassword(e.target.value)}
               className="mb-10"
+              type="password"
             />
             <Button
-              onClick={handleNavigateToFeed}
+              onClick={isLogin ? handleSignUp : handleSignIn}
               className="w-2/4 m-auto text-base font-semibold rounded-full p-3 bg-sky-900 text-white text-1xl border-solid border-2 hover:bg-white hover:text-sky-900 hover:border-solid hover:border-2 hover:border-sky-900"
             >
               Submit
