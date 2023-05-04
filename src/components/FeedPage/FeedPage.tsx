@@ -10,10 +10,6 @@ import {
 } from '@mui/material';
 import { FC, useEffect, useState } from 'react';
 import ImageOutlinedIcon from '@mui/icons-material/ImageOutlined';
-import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
-import FavoriteIcon from '@mui/icons-material/Favorite';
-import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
-import ChatBubbleIcon from '@mui/icons-material/ChatBubble';
 import { ProfileData } from '../../Data/ProfileData';
 import {
   addDoc,
@@ -30,6 +26,7 @@ import { app, db, storage } from '../../firebase/firebaseConfig';
 import { useForm } from 'react-hook-form';
 import { ref, uploadBytes } from 'firebase/storage';
 import { useLocation } from 'react-router-dom';
+import CommentsPage from './CommentsPage/CommentsPage';
 
 interface IProps {}
 
@@ -184,34 +181,7 @@ const FeedPage: FC<IProps> = (props: IProps) => {
                     </Typography>
                   </Box>
                   <Divider />
-
-                  <Box className="flex items-center justify-around my-3">
-                    <Box className="flex  items-center">
-                      <IconButton>
-                        <FavoriteBorderIcon />
-                      </IconButton>
-                      <Typography>120K Likes</Typography>
-                    </Box>
-                    <Box className="flex  items-center">
-                      <IconButton>
-                        <ChatBubbleOutlineIcon />
-                      </IconButton>
-                      <Typography>120K Comments</Typography>
-                    </Box>
-                  </Box>
-
-                  <Box className="w-full flex items-center mt-3">
-                    <IconButton>
-                      <Avatar
-                        alt="Remy Sharp"
-                        src="https://pbs.twimg.com/media/FjU2lkcWYAgNG6d.jpg"
-                      />
-                    </IconButton>
-                    <TextField
-                      label="Write your comments....."
-                      className="w-full"
-                    />
-                  </Box>
+                  <CommentsPage />
                 </Box>
               );
             })}
