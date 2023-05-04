@@ -16,6 +16,8 @@ import {
   addDoc,
   collection,
   onSnapshot,
+  orderBy,
+  query,
   serverTimestamp,
 } from 'firebase/firestore';
 import { db } from '../../../firebase/firebaseConfig';
@@ -42,9 +44,14 @@ const CommentsPage: FC<IProps> = (props: IProps) => {
   };
 
   useEffect(() => {
-    const unsubscribe = onSnapshot(collection(db, 'comments'), (snapshot) => {
-      setComments(snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })));
-    });
+    const unsubscribe = onSnapshot(
+      query(collection(db, 'comments'), orderBy('timestamp', 'asc')),
+      (snapshot) => {
+        setComments(
+          snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }))
+        );
+      }
+    );
     return unsubscribe;
   }, []);
 
@@ -62,7 +69,7 @@ const CommentsPage: FC<IProps> = (props: IProps) => {
             <IconButton>
               <ChatBubbleOutlineIcon />
             </IconButton>
-            <Typography>120K Comments</Typography>
+            <Typography>Comments</Typography>
           </Box>
         </Box>
         <Box>
