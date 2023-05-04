@@ -27,6 +27,7 @@ import { useForm } from 'react-hook-form';
 import { ref, uploadBytes } from 'firebase/storage';
 import { useLocation } from 'react-router-dom';
 import CommentsPage from './CommentsPage/CommentsPage';
+import SidebarPage from './SideBarPage/SidebarPage';
 
 interface IProps {}
 
@@ -85,7 +86,6 @@ const FeedPage: FC<IProps> = (props: IProps) => {
         setPosts(newPosts);
       }
     );
-
     return () => unsubscribe();
   }, []);
 
@@ -94,23 +94,7 @@ const FeedPage: FC<IProps> = (props: IProps) => {
   return (
     <Box className="bg-[#FAFAFB] h-full mt-2">
       <Box className="flex h-full ">
-        <Box className="w-2/6 bg-white h-100%">
-          <Box>
-            {ProfileData.map((data, index = Date.now()) => {
-              return (
-                <Box
-                  className="flex items-center py-3 hover:bg-sky-500 hover:text-white transition ease-in-out"
-                  key={index}
-                >
-                  <IconButton>{data.img}</IconButton>
-                  <Typography className="font-semibold">
-                    {data.Title}
-                  </Typography>
-                </Box>
-              );
-            })}
-          </Box>
-        </Box>
+        <SidebarPage />
         <Box className="ml-[10%]  mr-[10%]  mt-5 w-full h-100% flex flex-col m-5">
           <Box className="bg-white rounded-3xl pt-5 pb-5">
             <Typography className="mb-5 ml-7 font-semibold">
@@ -181,7 +165,7 @@ const FeedPage: FC<IProps> = (props: IProps) => {
                     </Typography>
                   </Box>
                   <Divider />
-                  <CommentsPage />
+                  <CommentsPage email={email} />
                 </Box>
               );
             })}
