@@ -35,3 +35,10 @@ code {
 .userPost .css-1d3z3hw-MuiOutlinedInput-notchedOutline {
   border: none;
 }
+
+.userTag {
+  width: 100%;
+}
+.userTag .css-1d3z3hw-MuiOutlinedInput-notchedOutline {
+  border: none;
+}

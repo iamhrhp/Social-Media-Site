@@ -69,18 +69,22 @@ const RegisterPage: FC = (props: IProps) => {
   console.log(isLogin);
 
   const handleSignIn = async () => {
-    const userCredential = await signInWithEmailAndPassword(
-      auth,
-      email,
-      password
-    );
-    console.log('login User', userCredential.user);
-    const userRef = doc(db, 'users', userCredential.user.uid);
-    const userDoc = await getDoc(userRef);
-    const passwordHash = userDoc.data()?.hashedPassword;
-    console.log('password hash', passwordHash);
-    if (passwordHash) {
-      navigate('/feed');
+    if (email === '' || password === '') {
+      alert('Please Enter the valid User Details');
+    } else {
+      const userCredential = await signInWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+      console.log('login User', userCredential.user);
+      const userRef = doc(db, 'users', userCredential.user.uid);
+      const userDoc = await getDoc(userRef);
+      const passwordHash = userDoc.data()?.hashedPassword;
+      console.log('password hash', passwordHash);
+      if (passwordHash) {
+        navigate('/feed');
+      }
     }
   };
 
