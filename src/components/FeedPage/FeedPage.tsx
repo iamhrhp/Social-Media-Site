@@ -21,12 +21,15 @@ import {
   doc,
   getDoc,
   onSnapshot,
+  orderBy,
+  query,
   serverTimestamp,
   where,
 } from 'firebase/firestore';
 import { app, db, storage } from '../../firebase/firebaseConfig';
 import { useForm } from 'react-hook-form';
 import { ref, uploadBytes } from 'firebase/storage';
+import { useLocation } from 'react-router-dom';
 
 interface IProps {}
 
@@ -40,17 +43,20 @@ const FeedPage: FC<IProps> = (props: IProps) => {
     formState: { errors },
   } = useForm();
 
+  const { state: email } = useLocation();
+  console.log(email);
   const handleImagePreview = (e: any) => {
     setFile(URL.createObjectURL(e.target.files[0]));
   };
 
-  // console.log(useForm());
+  //store image in firebase storage and stored post in firestore
   const handlePost = async (data: any) => {
     try {
       const fileRef = ref(storage, `images/${data.image[0].name}`);
       await uploadBytes(fileRef, data.image[0]);
 
       const post = {
+        userName: email,
         title: data.title,
         tags: data.tags.split(' ').map((tag: any) => ({ name: tag })),
         imageUrl: `https://firebasestorage.googleapis.com/v0/b/${
@@ -70,14 +76,18 @@ const FeedPage: FC<IProps> = (props: IProps) => {
     }
   };
 
+  //get Post onSnapshot order by created time desc
   useEffect(() => {
-    const unsubscribe = onSnapshot(collection(db, 'posts'), (snapshot) => {
-      const newPosts = snapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      }));
-      setPosts(newPosts);
-    });
+    const unsubscribe = onSnapshot(
+      query(collection(db, 'posts'), orderBy('createdAt', 'desc')),
+      (snapshot) => {
+        const newPosts = snapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+        setPosts(newPosts);
+      }
+    );
 
     return () => unsubscribe();
   }, []);
@@ -89,9 +99,12 @@ const FeedPage: FC<IProps> = (props: IProps) => {
       <Box className="flex h-full ">
         <Box className="w-2/6 bg-white h-100%">
           <Box>
-            {ProfileData.map((data) => {
+            {ProfileData.map((data, index = Date.now()) => {
               return (
-                <Box className="flex items-center py-3 hover:bg-sky-500 hover:text-white transition ease-in-out">
+                <Box
+                  className="flex items-center py-3 hover:bg-sky-500 hover:text-white transition ease-in-out"
+                  key={index}
+                >
                   <IconButton>{data.img}</IconButton>
                   <Typography className="font-semibold">
                     {data.Title}
@@ -149,11 +162,11 @@ const FeedPage: FC<IProps> = (props: IProps) => {
             </form>
           </Box>
           <Box className="mt-5 py-5 ">
-            {posts?.map((data) => {
+            {posts?.map((data, index = Date.now()) => {
               return (
-                <Box className="mb-5 py-5 bg-white rounded-3xl ">
+                <Box className="mb-5 py-5 bg-white rounded-3xl" key={index}>
                   <Typography className="font-bold px-5 mb-3">
-                    User name
+                    {data.userName}
                   </Typography>
                   <Typography className="px-5 mb-3">{data.title}</Typography>
                   <CardMedia

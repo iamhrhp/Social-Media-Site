@@ -72,18 +72,25 @@ const RegisterPage: FC = (props: IProps) => {
     if (email === '' || password === '') {
       alert('Please Enter the valid User Details');
     } else {
-      const userCredential = await signInWithEmailAndPassword(
-        auth,
-        email,
-        password
-      );
-      console.log('login User', userCredential.user);
-      const userRef = doc(db, 'users', userCredential.user.uid);
-      const userDoc = await getDoc(userRef);
-      const passwordHash = userDoc.data()?.hashedPassword;
-      console.log('password hash', passwordHash);
-      if (passwordHash) {
-        navigate('/feed');
+      try {
+        const userCredential = await signInWithEmailAndPassword(
+          auth,
+          email,
+          password
+        );
+        console.log('login User', userCredential.user);
+        const userRef = doc(db, 'users', userCredential.user.uid);
+        const userDoc = await getDoc(userRef);
+        const passwordHash = userDoc.data()?.hashedPassword;
+        const userName = userCredential.user.email;
+        console.log('userName', userName);
+
+        console.log('password hash', passwordHash);
+        if (passwordHash) {
+          navigate('/feed', { state: userName });
+        }
+      } catch (e) {
+        alert('User Not Exist');
       }
     }
   };
