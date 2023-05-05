@@ -15,55 +15,116 @@ import ChatBubbleIcon from '@mui/icons-material/ChatBubble';
 import {
   addDoc,
   collection,
+  doc,
+  getDocs,
   onSnapshot,
   orderBy,
   query,
   serverTimestamp,
+  setDoc,
+  updateDoc,
+  where,
 } from 'firebase/firestore';
 import { db } from '../../../firebase/firebaseConfig';
+import { useCollectionData } from 'react-firebase-hooks/firestore';
 
 interface IProps {
   email: string;
+  postId: string;
+  likes?: string;
 }
 
 const CommentsPage: FC<IProps> = (props: IProps) => {
-  const [comment, setComment] = useState<string>('');
-  const [comments, setComments] = useState<any[]>([]);
+  // const [comment, setComment] = useState<string>('');
+  // const [comments, setComments] = useState<any[]>([]);
+  const [postLikes, setPostLikes] = useState<string>('');
+  //   const [commentText, setCommentText] = useState<string>('');
+  //   const [comments, setComments] = useState<any[]>([]);
 
-  const { email } = props;
+  // console.log('-------', comments);
+  const { email, postId, likes } = props;
 
-  const handleSubmit = async (event: any) => {
-    event.preventDefault();
-    await addDoc(collection(db, 'comments'), {
-      email: email,
-      text: comment,
-      timestamp: serverTimestamp(),
-    });
-
-    setComment('');
+  const likePost = async () => {
+    const postRef = doc(collection(db, 'posts'), postId);
+    await updateDoc(postRef, { likes: postLikes + 1 });
+    setPostLikes(postLikes + 1);
   };
 
-  useEffect(() => {
-    const unsubscribe = onSnapshot(
-      query(collection(db, 'comments'), orderBy('timestamp', 'asc')),
-      (snapshot) => {
-        setComments(
-          snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }))
-        );
-      }
-    );
-    return unsubscribe;
-  }, []);
+  //post a comment in firestore
+
+  //   const submitComment = async (event: any) => {
+  //     event.preventDefault();
+  //     const commentRef = collection(db, 'comments');
+  //     await addDoc(commentRef, {
+  //       email: email,
+  //       comment: comment,
+  //       postId: postId,
+  //       timestamp: serverTimestamp(),
+  //     });
+  //     setComment('');
+  //   };
+
+  //retrieve all the comments by query sort by
+
+  //   useEffect(() => {
+  //     const unsubscribe = onSnapshot(
+  //       query(
+  //         collection(db, 'comments'),
+  //         orderBy('timestamp', 'asc'),
+  //         where('post', '==', postId)
+  //       ),
+  //       (snapshot) => {
+  //         setComments(
+  //           snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }))
+  //         );
+  //       }
+  //     );
+  //     return unsubscribe;
+  //   }, []);
+  // const commentsCollectionRef = collection(db, 'comments');
+  // const submitComment = async (event: any) => {
+  //   event.preventDefault();
+  //   const newComment = {
+  //     comment: comment,
+  //     email: email,
+  //     postId: postId,
+  //     timestamp: new Date(),
+  //   };
+  //   const docRef = await addDoc(commentsCollectionRef, newComment);
+  //   console.log('Comment added with ID: ', docRef.id);
+  //   setComment('');
+  // };
+
+  // const loadComments = () => {
+  //   const commentsQuery = query(
+  //     commentsCollectionRef
+  //     //   where('postId', '==', postId)
+  //   );
+  //   return onSnapshot(commentsQuery, (snapshot) => {
+  //     const comments: any = [];
+  //     snapshot.forEach((doc) => {
+  //       console.log('-------doc', doc);
+  //       comments.push({ id: doc.id, ...doc.data() });
+  //     });
+  //     setComments(comments);
+  //   });
+  // };
+
+  // useEffect(() => {
+  //   loadComments();
+  // }, []);
 
   return (
     <>
-      <form onSubmit={handleSubmit}>
+      <form
+      // onSubmit={submitComment}
+      >
         <Box className="flex items-center justify-around my-3">
           <Box className="flex  items-center">
-            <IconButton>
+            <IconButton onClick={likePost}>
               <FavoriteBorderIcon />
             </IconButton>
-            <Typography>120K Likes</Typography>
+            <Typography>{likes ? likes : postLikes} likes</Typography>
           </Box>
           <Box className="flex  items-center">
             <IconButton>
@@ -73,16 +134,18 @@ const CommentsPage: FC<IProps> = (props: IProps) => {
           </Box>
         </Box>
         <Box>
-          {comments.map((comment) => (
-            <Box className="m-5" key={comment.id}>
-              <Typography className="font-bold ">{comment.email}</Typography>
-              <Typography>{comment.text}</Typography>
-              <Typography className="text-xs">
-                {comment.timestamp?.toDate().toLocaleTimeString('en-US')}
-              </Typography>
-              <Divider />
-            </Box>
-          ))}
+          {/* {comments.map((comment) => {
+            return (
+              <Box className="m-5" key={comment.id}>
+                <Typography className="font-bold ">{comment.email}</Typography>
+                <Typography>{comment?.comment}</Typography>
+                <Typography className="text-xs">
+                  {comment.timestamp?.toDate().toLocaleTimeString('en-US')}
+                </Typography>
+                <Divider />
+              </Box>
+            );
+          })} */}
         </Box>
         <Box className="w-full flex items-center mt-3">
           <IconButton>
@@ -92,8 +155,8 @@ const CommentsPage: FC<IProps> = (props: IProps) => {
             />
           </IconButton>
           <TextField
-            value={comment}
-            onChange={(event) => setComment(event.target.value)}
+            // value={comment}
+            // onChange={(event) => setComment(event.target.value)}
             label="Write your comments....."
             className="w-full"
           />

@@ -34,6 +34,10 @@ interface IProps {}
 const FeedPage: FC<IProps> = (props: IProps) => {
   const [file, setFile] = useState<string>('');
   const [posts, setPosts] = useState<any[]>([]);
+  const [postid, setPostId] = useState<string>('');
+
+  console.log('------', typeof postid);
+
   const {
     register,
     handleSubmit,
@@ -42,12 +46,12 @@ const FeedPage: FC<IProps> = (props: IProps) => {
   } = useForm();
 
   const { state: email } = useLocation();
-  console.log(email);
+
   const handleImagePreview = (e: any) => {
     setFile(URL.createObjectURL(e.target.files[0]));
   };
 
-  //store image in firebase storage and stored post in firestore
+  //create post in firestore and store image in firebase storage
   const handlePost = async (data: any) => {
     try {
       const fileRef = ref(storage, `images/${data.image[0].name}`);
@@ -145,7 +149,11 @@ const FeedPage: FC<IProps> = (props: IProps) => {
           <Box className="mt-5 py-5 ">
             {posts?.map((data, index = Date.now()) => {
               return (
-                <Box className="mb-5 py-5 bg-white rounded-3xl" key={index}>
+                <Box
+                  className="mb-5 py-5 bg-white rounded-3xl"
+                  key={index}
+                  onClick={() => setPostId(data.id)}
+                >
                   <Typography className="font-bold px-5 mb-3">
                     {data.userName}
                   </Typography>
@@ -165,7 +173,11 @@ const FeedPage: FC<IProps> = (props: IProps) => {
                     </Typography>
                   </Box>
                   <Divider />
-                  <CommentsPage email={email} />
+                  <CommentsPage
+                    likes={data?.likes}
+                    postId={postid}
+                    email={email}
+                  />
                 </Box>
               );
             })}
