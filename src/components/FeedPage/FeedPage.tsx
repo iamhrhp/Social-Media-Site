@@ -10,10 +10,6 @@ import {
 } from '@mui/material';
 import { FC, useEffect, useState } from 'react';
 import ImageOutlinedIcon from '@mui/icons-material/ImageOutlined';
-import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
-import FavoriteIcon from '@mui/icons-material/Favorite';
-import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
-import ChatBubbleIcon from '@mui/icons-material/ChatBubble';
 import { ProfileData } from '../../Data/ProfileData';
 import {
   addDoc,
@@ -21,18 +17,27 @@ import {
   doc,
   getDoc,
   onSnapshot,
+  orderBy,
+  query,
   serverTimestamp,
   where,
 } from 'firebase/firestore';
 import { app, db, storage } from '../../firebase/firebaseConfig';
 import { useForm } from 'react-hook-form';
 import { ref, uploadBytes } from 'firebase/storage';
+import { useLocation } from 'react-router-dom';
+import CommentsPage from './CommentsPage/CommentsPage';
+import SidebarPage from './SideBarPage/SidebarPage';
 
 interface IProps {}
 
 const FeedPage: FC<IProps> = (props: IProps) => {
   const [file, setFile] = useState<string>('');
   const [posts, setPosts] = useState<any[]>([]);
+  const [postid, setPostId] = useState<string>('');
+
+  console.log('------', typeof postid);
+
   const {
     register,
     handleSubmit,
@@ -40,17 +45,20 @@ const FeedPage: FC<IProps> = (props: IProps) => {
     formState: { errors },
   } = useForm();
 
+  const { state: email } = useLocation();
+
   const handleImagePreview = (e: any) => {
     setFile(URL.createObjectURL(e.target.files[0]));
   };
 
-  // console.log(useForm());
+  //create post in firestore and store image in firebase storage
   const handlePost = async (data: any) => {
     try {
       const fileRef = ref(storage, `images/${data.image[0].name}`);
       await uploadBytes(fileRef, data.image[0]);
 
       const post = {
+        userName: email,
         title: data.title,
         tags: data.tags.split(' ').map((tag: any) => ({ name: tag })),
         imageUrl: `https://firebasestorage.googleapis.com/v0/b/${
@@ -70,15 +78,18 @@ const FeedPage: FC<IProps> = (props: IProps) => {
     }
   };
 
+  //get Post onSnapshot order by created time desc
   useEffect(() => {
-    const unsubscribe = onSnapshot(collection(db, 'posts'), (snapshot) => {
-      const newPosts = snapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      }));
-      setPosts(newPosts);
-    });
-
+    const unsubscribe = onSnapshot(
+      query(collection(db, 'posts'), orderBy('createdAt', 'desc')),
+      (snapshot) => {
+        const newPosts = snapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+        setPosts(newPosts);
+      }
+    );
     return () => unsubscribe();
   }, []);
 
@@ -87,20 +98,7 @@ const FeedPage: FC<IProps> = (props: IProps) => {
   return (
     <Box className="bg-[#FAFAFB] h-full mt-2">
       <Box className="flex h-full ">
-        <Box className="w-2/6 bg-white h-100%">
-          <Box>
-            {ProfileData.map((data) => {
-              return (
-                <Box className="flex items-center py-3 hover:bg-sky-500 hover:text-white transition ease-in-out">
-                  <IconButton>{data.img}</IconButton>
-                  <Typography className="font-semibold">
-                    {data.Title}
-                  </Typography>
-                </Box>
-              );
-            })}
-          </Box>
-        </Box>
+        <SidebarPage />
         <Box className="ml-[10%]  mr-[10%]  mt-5 w-full h-100% flex flex-col m-5">
           <Box className="bg-white rounded-3xl pt-5 pb-5">
             <Typography className="mb-5 ml-7 font-semibold">
@@ -149,11 +147,15 @@ const FeedPage: FC<IProps> = (props: IProps) => {
             </form>
           </Box>
           <Box className="mt-5 py-5 ">
-            {posts?.map((data) => {
+            {posts?.map((data, index = Date.now()) => {
               return (
-                <Box className="mb-5 py-5 bg-white rounded-3xl ">
+                <Box
+                  className="mb-5 py-5 bg-white rounded-3xl"
+                  key={index}
+                  onClick={() => setPostId(data.id)}
+                >
                   <Typography className="font-bold px-5 mb-3">
-                    User name
+                    {data.userName}
                   </Typography>
                   <Typography className="px-5 mb-3">{data.title}</Typography>
                   <CardMedia
@@ -171,34 +173,11 @@ const FeedPage: FC<IProps> = (props: IProps) => {
                     </Typography>
                   </Box>
                   <Divider />
-
-                  <Box className="flex items-center justify-around my-3">
-                    <Box className="flex  items-center">
-                      <IconButton>
-                        <FavoriteBorderIcon />
-                      </IconButton>
-                      <Typography>120K Likes</Typography>
-                    </Box>
-                    <Box className="flex  items-center">
-                      <IconButton>
-                        <ChatBubbleOutlineIcon />
-                      </IconButton>
-                      <Typography>120K Comments</Typography>
-                    </Box>
-                  </Box>
-
-                  <Box className="w-full flex items-center mt-3">
-                    <IconButton>
-                      <Avatar
-                        alt="Remy Sharp"
-                        src="https://pbs.twimg.com/media/FjU2lkcWYAgNG6d.jpg"
-                      />
-                    </IconButton>
-                    <TextField
-                      label="Write your comments....."
-                      className="w-full"
-                    />
-                  </Box>
+                  <CommentsPage
+                    likes={data?.likes}
+                    postId={postid}
+                    email={email}
+                  />
                 </Box>
               );
             })}
