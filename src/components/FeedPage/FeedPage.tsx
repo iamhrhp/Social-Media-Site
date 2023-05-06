@@ -36,7 +36,7 @@ const FeedPage: FC<IProps> = (props: IProps) => {
   const [posts, setPosts] = useState<any[]>([]);
   const [postid, setPostId] = useState<string>('');
 
-  console.log('------', typeof postid);
+  // console.log('------', typeof postid);
 
   const {
     register,
@@ -72,7 +72,7 @@ const FeedPage: FC<IProps> = (props: IProps) => {
       setValue('title', '');
       setValue('tags', '');
       setValue('image', '');
-      console.log('----------', data);
+      // console.log('----------', data);
     } catch (e) {
       alert(e);
     }
@@ -93,7 +93,7 @@ const FeedPage: FC<IProps> = (props: IProps) => {
     return () => unsubscribe();
   }, []);
 
-  console.log(posts);
+  // console.log(posts);
 
   return (
     <Box className="bg-[#FAFAFB] h-full mt-2">

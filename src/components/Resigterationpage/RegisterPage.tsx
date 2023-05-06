@@ -55,7 +55,7 @@ const RegisterPage: FC = (props: IProps) => {
         );
         const userRef = doc(db, 'users', userCredential.user.uid);
         await setDoc(userRef, { email, hashedPassword });
-        console.log(userCredential.user);
+        // console.log(userCredential.user);
         if (userCredential.user) {
           setIsLogin(false);
           setEmail('');
@@ -66,7 +66,7 @@ const RegisterPage: FC = (props: IProps) => {
       }
     }
   };
-  console.log(isLogin);
+  isLogin;
 
   const handleSignIn = async () => {
     if (email === '' || password === '') {
@@ -78,14 +78,14 @@ const RegisterPage: FC = (props: IProps) => {
           email,
           password
         );
-        console.log('login User', userCredential.user);
+        // console.log('login User', userCredential.user);
         const userRef = doc(db, 'users', userCredential.user.uid);
         const userDoc = await getDoc(userRef);
         const passwordHash = userDoc.data()?.hashedPassword;
         const userName = userCredential.user.email;
-        console.log('userName', userName);
+        // console.log('userName', userName);
 
-        console.log('password hash', passwordHash);
+        // console.log('password hash', passwordHash);
         if (passwordHash) {
           navigate('/feed', { state: userName });
         }
