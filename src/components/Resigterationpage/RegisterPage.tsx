@@ -51,7 +51,6 @@ const RegisterPage: FC = (props: IProps) => {
       }
     }
   };
-  isLogin;
 
   const handleSignIn = async () => {
     if (email === '' || password === '') {
