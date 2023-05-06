@@ -40,7 +40,6 @@ const RegisterPage: FC = (props: IProps) => {
         );
         const userRef = doc(db, 'users', userCredential.user.uid);
         await setDoc(userRef, { email, hashedPassword });
-        // console.log(userCredential.user);
         if (userCredential.user) {
           setIsLogin(false);
           setEmail('');
@@ -51,7 +50,6 @@ const RegisterPage: FC = (props: IProps) => {
       }
     }
   };
-  isLogin;
 
   const handleSignIn = async () => {
     if (email === '' || password === '') {
