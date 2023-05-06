@@ -16,17 +16,14 @@ import {
   addDoc,
   collection,
   doc,
-  getDocs,
   onSnapshot,
   orderBy,
   query,
   serverTimestamp,
-  setDoc,
   updateDoc,
   where,
 } from 'firebase/firestore';
 import { db } from '../../../firebase/firebaseConfig';
-import { useCollectionData } from 'react-firebase-hooks/firestore';
 
 interface IProps {
   email: string;

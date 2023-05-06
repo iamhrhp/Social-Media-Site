@@ -4,23 +4,17 @@ import {
   TextField,
   Typography,
   Divider,
-  IconButton,
-  Avatar,
   Button,
 } from '@mui/material';
 import { FC, useEffect, useState } from 'react';
 import ImageOutlinedIcon from '@mui/icons-material/ImageOutlined';
-import { ProfileData } from '../../Data/ProfileData';
 import {
   addDoc,
   collection,
-  doc,
-  getDoc,
   onSnapshot,
   orderBy,
   query,
   serverTimestamp,
-  where,
 } from 'firebase/firestore';
 import { app, db, storage } from '../../firebase/firebaseConfig';
 import { useForm } from 'react-hook-form';
