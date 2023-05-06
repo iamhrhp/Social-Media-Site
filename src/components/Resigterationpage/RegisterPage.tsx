@@ -1,20 +1,9 @@
 import { Button, Box, Typography, CardMedia, TextField } from '@mui/material';
-import { FC, useEffect, useState } from 'react';
+import { FC, useState } from 'react';
 import fb from '../../images/logo/fb.png';
 import { useNavigate } from 'react-router-dom';
-import { v4 as uuidv4 } from 'uuid';
 import { auth, db } from '../../firebase/firebaseConfig';
-import {
-  addDoc,
-  collection,
-  doc,
-  getDoc,
-  getDocs,
-  onSnapshot,
-  query,
-  setDoc,
-  where,
-} from 'firebase/firestore';
+import { collection, doc, getDoc, setDoc } from 'firebase/firestore';
 import bcrypt from 'bcryptjs';
 import {
   createUserWithEmailAndPassword,
@@ -28,17 +17,13 @@ const RegisterPage: FC = (props: IProps) => {
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
 
-  const [hashedpass, setHashedPass] = useState<string>('');
-
   const navigate = useNavigate();
-  const uid = uuidv4();
 
   const navigateToLogin = () => {
     !isLogin ? setIsLogin(true) : setIsLogin(false);
   };
 
   // console.log(userss);
-  const userRef = collection(db, 'users');
 
   // console.log(hashedpass);
 

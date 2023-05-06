@@ -1,13 +1,5 @@
-import { FC, useEffect, useState } from 'react';
-import {
-  Box,
-  Typography,
-  IconButton,
-  TextField,
-  Avatar,
-  Button,
-  Divider,
-} from '@mui/material';
+import { FC } from 'react';
+import { Box, Typography, IconButton } from '@mui/material';
 import { ProfileData } from '../../../Data/ProfileData';
 
 interface IProps {}
