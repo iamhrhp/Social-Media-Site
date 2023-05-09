@@ -77,6 +77,7 @@ const CommentsPage: FC<IProps> = (props: IProps) => {
     return unsubscribe;
   }, []);
 
+  console.log(comments);
   return (
     <>
       <form onSubmit={submitComment}>
@@ -99,7 +100,7 @@ const CommentsPage: FC<IProps> = (props: IProps) => {
             return (
               <Box className="m-5" key={comment.id}>
                 <Typography className="font-bold ">{comment.email}</Typography>
-                <Typography>{comment?.comment}</Typography>
+                <Typography>{comment.comment}</Typography>
                 <Typography className="text-xs">
                   {comment.timestamp?.toDate().toLocaleTimeString('en-US')}
                 </Typography>
@@ -116,8 +117,8 @@ const CommentsPage: FC<IProps> = (props: IProps) => {
             />
           </IconButton>
           <TextField
-            // value={comment}
-            // onChange={(event) => setComment(event.target.value)}
+            value={comment}
+            onChange={(event) => setComment(event.target.value)}
             label="Write your comments....."
             className="w-full"
           />

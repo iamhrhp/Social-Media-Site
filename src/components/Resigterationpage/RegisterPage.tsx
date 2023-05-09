@@ -9,6 +9,7 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
 } from 'firebase/auth';
+import toast, { Toaster } from 'react-hot-toast';
 
 interface IProps {}
 
@@ -29,7 +30,7 @@ const RegisterPage: FC = (props: IProps) => {
 
   const handleSignUp = async () => {
     if (email === '' || password === '') {
-      alert('Please Enter the valid User Details');
+      toast.error('Please Enter the valid User Details');
     } else {
       const hashedPassword = await bcrypt.hash(password, 10);
       try {
@@ -53,7 +54,7 @@ const RegisterPage: FC = (props: IProps) => {
 
   const handleSignIn = async () => {
     if (email === '' || password === '') {
-      alert('Please Enter the valid User Details');
+      toast.error('Please Enter the valid User Details');
     } else {
       try {
         const userCredential = await signInWithEmailAndPassword(
@@ -71,9 +72,14 @@ const RegisterPage: FC = (props: IProps) => {
         // console.log('password hash', passwordHash);
         if (passwordHash) {
           navigate('/feed', { state: userName });
+          setEmail('');
+          setPassword('');
+          toast.success('Login successfully');
         }
       } catch (e) {
-        alert('User Not Exist');
+        toast.error('User not Exist');
+        setEmail('');
+        setPassword('');
       }
     }
   };
@@ -143,6 +149,7 @@ const RegisterPage: FC = (props: IProps) => {
             </Button>
           </Box>
         </Box>
+        <Toaster />
       </Box>
     </Box>
   );

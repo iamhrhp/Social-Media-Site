@@ -22,6 +22,7 @@ import { ref, uploadBytes } from 'firebase/storage';
 import { useLocation } from 'react-router-dom';
 import CommentsPage from './CommentsPage/CommentsPage';
 import SidebarPage from './SideBarPage/SidebarPage';
+import toast, { Toaster } from 'react-hot-toast';
 
 interface IProps {}
 
@@ -66,6 +67,8 @@ const FeedPage: FC<IProps> = (props: IProps) => {
       setValue('title', '');
       setValue('tags', '');
       setValue('image', '');
+      toast.success('Post submitted successfully');
+
       // console.log('----------', data);
     } catch (e) {
       alert(e);
@@ -179,6 +182,7 @@ const FeedPage: FC<IProps> = (props: IProps) => {
         </Box>
         <Box className="w-2/6 bg-white h-100%">chat</Box>
       </Box>
+      <Toaster />
     </Box>
   );
 };
